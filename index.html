@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Docker4 by wangfakang</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Docker4</h1>
+        <p class="header">Registrator analyze </p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/wangfakang/docker4/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/wangfakang/docker4/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/wangfakang/docker4">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/wangfakang">wangfakang</a></p>
+
+
+      </header>
+      <section>
+        <p><code>registrator源码的简单分析：</code>   </p>
+
+<h1>
+<a id="1前面文章介绍了registrator是用来干啥的在简单回顾一下-" class="anchor" href="#1%E5%89%8D%E9%9D%A2%E6%96%87%E7%AB%A0%E4%BB%8B%E7%BB%8D%E4%BA%86registrator%E6%98%AF%E7%94%A8%E6%9D%A5%E5%B9%B2%E5%95%A5%E7%9A%84%E5%9C%A8%E7%AE%80%E5%8D%95%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B-" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.前面文章介绍了registrator是用来干啥的，在简单回顾一下． </h1>
+
+<p>registrator是用来检测docker容器启动的服务以及所暴露的端口，然后把其注册到第三方存储系统，如ETCD.Consul.SKYDNS等．</p>
+
+<h1>
+<a id="2下面简单的说一下其registrator的原理----" class="anchor" href="#2%E4%B8%8B%E9%9D%A2%E7%AE%80%E5%8D%95%E7%9A%84%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%85%B6registrator%E7%9A%84%E5%8E%9F%E7%90%86----" aria-hidden="true"><span class="octicon octicon-link"></span></a>2.下面简单的说一下其registrator的原理：    </h1>
+
+<p>其实说白了registrator就是监听docker的sock　event，由于有新的docker容器启动的时候都会与docker－daemondocker进行通信．
+　然后就是利用这一点来进行获取相关信息．    </p>
+
+<pre><code>  其实可以通过监听的事件然后得到新启动容器的id，然后调用docker api　（docker inspect id类似）来获取更多容器中相关信息
+</code></pre>
+
+<p>　（如：暴露的端口启动服务的ip等等）．<br>
+　
+　　　然后相应的容器服务的信息就到手了，此时再根据用户选择的第三方存储系统(ETCD.Consul.SKYDNS)组织成相应的数据进行调用第
+　三方的rest api进行相应的注册．  </p>
+
+<h1>
+<a id="3registrator最值得学习的就是使用了一个设计模式适配器桥接模式----" class="anchor" href="#3registrator%E6%9C%80%E5%80%BC%E5%BE%97%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%B0%B1%E6%98%AF%E4%BD%BF%E7%94%A8%E4%BA%86%E4%B8%80%E4%B8%AA%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%80%82%E9%85%8D%E5%99%A8%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F----" aria-hidden="true"><span class="octicon octicon-link"></span></a>3.registrator最值得学习的就是使用了一个设计模式（适配器/桥接模式）    </h1>
+
+<pre><code>在源码目录中是这样的：        
+bridge        circle.yml  consulkv    Dockerfile.dev  etcd     Makefile    modules.go  registrator.go  SPONSORS
+CHANGELOG.md  consul      Dockerfile  docs            LICENSE  mkdocs.yml  README.md   skydns2         VERSION
+</code></pre>
+
+<p>其中在bridge中就作为中间层，使得registrator不关心用户使用的第三方存储系统．<br>
+这一块主要设计到的go的interface特性．     </p>
+
+<h1>
+<a id="欢迎一起交流学习-" class="anchor" href="#%E6%AC%A2%E8%BF%8E%E4%B8%80%E8%B5%B7%E4%BA%A4%E6%B5%81%E5%AD%A6%E4%B9%A0-" aria-hidden="true"><span class="octicon octicon-link"></span></a>欢迎一起交流学习 </h1>
+
+<p>在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流</p>
+
+<ul>
+<li>邮件(1031379296#qq.com, 把#换成@)</li>
+<li>QQ: 1031379296</li>
+<li>weibo: <a href="http://weibo.com/u/2786211992/home">@王发康</a>
+</li>
+</ul>
+
+<h1>
+<a id="thx" class="anchor" href="#thx" aria-hidden="true"><span class="octicon octicon-link"></span></a>Thx</h1>
+
+<ul>
+<li>chunshengsterATgmail.com</li>
+</ul>
+
+<h1>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author</h1>
+
+<ul>
+<li>Linux\nginx\golang\c\c++爱好者</li>
+<li>欢迎一起交流  一起学习# </li>
+<li>Others say good and Others good</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("Registrator analyze ");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
